@@ -17,13 +17,17 @@ app.use(express.json());
 
 app.get("/",async function(req,res){
 
-    var ids = [];
+    const limit = req.query.limit ? parseInt(req.query.limit) : 5;
+    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
 
-    //Write your code here
-    //modify the ids array
+    try {
+        const usersInRange = await users.find().limit(limit).skip(limit * offset);
+        const ids = usersInRange.map(user => user._id);
 
-    res.send(ids);
-
+        res.send(ids);
+    } catch (error) {
+        res.status(500).send("Error fetching data from the database");
+    }
 });
 
 module.exports = app;
